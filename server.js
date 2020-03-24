@@ -1,26 +1,31 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const logger = require('morgan');
+const compression = require('compression');
 
 const PORT = process.env.PORT || 8080;
 
 const app = express();
+app.use(logger('dev'));
 
 // Serve static content for the app from the "public" directory in the application directory.
 app.use(express.static('public'));
+
+// compress all responses
+app.use(compression());
 
 // Parse application body as JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Set Handlebars.
-const exphbs = require('express-handlebars');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/budget', {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+});
 
-app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
-app.set('view engine', 'handlebars');
-
-// Import routes and give the server access to them.
-const routes = require('./controllers/burgers_controller.js');
-
-app.use(routes);
+// routes
+app.use(require('./routes/api-routes'));
+app.use(require('./routes/html-routes'));
 
 // Start our server so that it can begin listening to client requests.
 app.listen(PORT, function() {
