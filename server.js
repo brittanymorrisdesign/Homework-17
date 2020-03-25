@@ -19,15 +19,15 @@ app.use(compression());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-mongoose.connect(
-  MONGODB_URI ||
-    'mongodb://brittanymorrisdesign:password123!@ds123770.mlab.com:23770/heroku_qw8jtk2j',
-  {
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-  }
-);
+// If deployed on heroku, use the deployed database. Otherwise use the local workout database
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  'mongodb://brittanymorrisdesign:password123!@ds123770.mlab.com:23770/heroku_qw8jtk2j';
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true,
+});
 
 // routes
 app.use(require('./routes/api-routes'));
