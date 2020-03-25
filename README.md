@@ -2,7 +2,7 @@
 NoSQL: Workout Tracker
 
 Github Page: https://brittanymorrisdesign.github.io/Homework-17 </br>
-Live Demo: 
+Live Demo: https://safe-dawn-57497.herokuapp.com/
 
 
 # User Story
