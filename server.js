@@ -3,9 +3,10 @@ const mongoose = require('mongoose');
 const logger = require('morgan');
 const compression = require('compression');
 
+// Create express server
+const app = express();
 const PORT = process.env.PORT || 8080;
 
-const app = express();
 app.use(logger('dev'));
 
 // Serve static content for the app from the "public" directory in the application directory.
@@ -18,6 +19,7 @@ app.use(compression());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Sets up db
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/budget', {
   useNewUrlParser: true,
   useFindAndModify: false,

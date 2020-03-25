@@ -6,9 +6,21 @@ const db = require('../models');
 // Routes
 // =============================================================
 
-// Get previous workout
-router.get('/workouts', (req, res) => {
+// Gets all previous workouts
+router.get('/api/workouts', (req, res) => {
   db.Workout.find({})
+    .then(dbWorkout => {
+      console.log(dbWorkout);
+      res.json(dbWorkout);
+    })
+    .catch(err => {
+      res.status(400).json(err);
+    });
+});
+
+// Add user's new workout
+router.post('/api/workouts', ({ body }, res) => {
+  db.Workout.create(body)
     .then(dbWorkout => {
       res.json(dbWorkout);
     })
@@ -17,31 +29,32 @@ router.get('/workouts', (req, res) => {
     });
 });
 
-// PUT route for updating workout.
-app.put('/api/todos', function(req, res) {
-  db.Todo.update(
-    {
-      text: req.body.text,
-      complete: req.body.complete,
-    },
-    {
-      where: {
-        id: req.body.id,
-      },
-    }
-  ).then(function(dbTodo) {
-    res.json(dbTodo);
-  });
-});
-
-// Create workout
-router.post('/workouts', (req, res) => {
-  db.Workout.create(req.body)
-    .then(db => {
-      res.json(db);
+// PUT route for updating workout exercises by id
+router.put('/api/workouts/:id', function(req, res) {
+  db.Workout.updateOne(
+    { id: req.params.id },
+    { $push: { exercises: req.body } }
+  )
+    .then(function(dbWorkout) {
+      res.json(dbWorkout);
     })
     .catch(err => {
       res.status(400).json(err);
+    });
+});
+
+// Get request for last 7 workouts
+router.get('/workouts/range', (req, res) => {
+  // Organizes workouts by most recent first
+  db.Workout.find({})
+    .sort({ _id: -1 })
+    .limit(7)
+    .then(dbWorkout => {
+      res.json(dbWorkout);
+      console.log(dbWorkout);
+    })
+    .catch(err => {
+      res.json(err);
     });
 });
 
